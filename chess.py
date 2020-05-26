@@ -6,16 +6,30 @@ WHITE =  1
 BLACK = -1
 NONE  =  0
 
+# BOARD = [
+#     # 0     #1     #2     #3     #4     #5     #6      #7
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 0
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 1
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 2
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 3
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 4
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 5
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 6
+#     [0,     0,     0,     0,     0,     0,     0,      0],   # 7
+# ]
+
+
+
 BOARD = [
-    # 0      #1     #2     #3     #4     #5     #6      #7
-    [-5,    -3,    -4,    -9, -1000,    -4,    -3,    -5],   # 0
-    [-1,    -1,    -1,    -1,    -1,    -1,    -1,    -1],   # 1
+    # 0     #1     #2     #3     #4     #5     #6      #7
+    [0,     0,     0,     5,     0,     0,     0,      0],   # 0
+    [0,     0,     0,     0,     0,     0,     0,      0],   # 1
     [0,     0,     0,     0,     0,     0,     0,      0],   # 2
-    [0,     0,     0,     0,     0,     0,     0,      0],   # 3
+    [0,     0,     0,     0,     0,     0,  1000,      0],   # 3
     [0,     0,     0,     0,     0,     0,     0,      0],   # 4
-    [0,    0,     0,     0,     0,     0,     0,      0],   # 5
-    [1,     1,     1,     1,     1,     1,     1,      1],   # 6
-    [5,     3,     4,     9,  1000,     4,     3,      5],   # 7
+    [0,     0,     0,     0,     0,     0,     0,      0],   # 5
+    [0,     0,     0,     0,     0,     0, -1000,      0],   # 6
+    [0,     9,     0,     0,     0,     0,     0,      0],   # 7
 ]
 
 def who(a):
@@ -28,8 +42,14 @@ def who(a):
 
 
 def make_move(move):
+    move.append(BOARD[move[3]][move[2]])
     BOARD[move[3]][move[2]] = BOARD[move[1]][move[0]]
     BOARD[move[1]][move[0]] = 0
+
+def unmake_move(move):
+    BOARD[move[1]][move[0]] = BOARD[move[3]][move[2]]
+    BOARD[move[3]][move[2]] = move[4]
+ 
 
 
 def all_moves(player):
@@ -44,56 +64,56 @@ def all_moves(player):
 def pawn_moves(x, y, player):
     moves = []
     if y > 0 and BOARD[y-player][x] == NONE:
-        moves.append((x, y, x, y-player))  # 1x Forward
+        moves.append([x, y, x, y-player])  # 1x Forward
     if y > 0 and x > 0 and who(BOARD[y-player][x-1]) == -player:  # Diagonal Left
-        moves.append((x, y, x-1, y-player))
+        moves.append([x, y, x-1, y-player])
     if y > 0 and x < 7 and who(BOARD[y-player][x+1]) == -player:  # Diagonal Right
-        moves.append((x, y, x+1, y-player))
+        moves.append([x, y, x+1, y-player])
     return moves
 
 def white_pawn_moves(x, y):
     moves = pawn_moves(x, y, WHITE)
     if y == 6 and BOARD[y-1][x] == 0 and BOARD[y-2][x] == 0:
-        moves.append((x, y, x, y-2))  # 2x Forward
+        moves.append([x, y, x, y-2])  # 2x Forward
     return moves
 
 def black_pawn_moves(x, y):
     moves = pawn_moves(x, y, BLACK)
     if y == 1 and BOARD[y+1][x] == 0 and BOARD[y+2][x] == 0:
-        moves.append((x, y, x, y+2))  # 2x Forward
+        moves.append([x, y, x, y+2])  # 2x Forward
     return moves
 
 def rook_moves(x, y, player):
     moves = []
     for i in [1, 2, 3, 4, 5, 6, 7]:  # Up
         if y-i >= 0 and BOARD[y-i][x] == 0:
-            moves.append((x, y, x, y-i))
+            moves.append([x, y, x, y-i])
         elif y-i >= 0 and who(BOARD[y-i][x]) == -player:
-            moves.append((x, y, x, y-i))
+            moves.append([x, y, x, y-i])
             break
         elif y-i >= 0 and who(BOARD[y-i][x]) == player:
             break
     for i in [1, 2, 3, 4, 5, 6, 7]:  # Down
         if y+i <= 7 and BOARD[y+i][x] == 0:
-            moves.append((x, y, x, y+i))
+            moves.append([x, y, x, y+i])
         elif y+i <= 7 and who(BOARD[y+i][x]) == -player:
-            moves.append((x, y, x, y+i))
+            moves.append([x, y, x, y+i])
             break
         elif y+i <= 7 and who(BOARD[y+i][x]) == player:
             break
     for i in [1, 2, 3, 4, 5, 6, 7]:  # Right
         if x+i <= 7 and BOARD[y][x+i] == 0:
-            moves.append((x, y, x+i, y))
+            moves.append([x, y, x+i, y])
         elif x+i <= 7 and who(BOARD[y][x+i]) == -player:
-            moves.append((x, y, x+i, y))
+            moves.append([x, y, x+i, y])
             break
         elif x+i <= 7 and who(BOARD[y][x+i]) == player:
             break
     for i in [1, 2, 3, 4, 5, 6, 7]:  # Left
         if x-i >= 0 and BOARD[y][x-i] == 0:
-            moves.append((x, y, x-i, y))
+            moves.append([x, y, x-i, y])
         elif x-i >= 0 and who(BOARD[y][x-i]) == -player:
-            moves.append((x, y, x-i, y))
+            moves.append([x, y, x-i, y])
             break
         elif x-i >= 0 and who(BOARD[y][x-i]) == player:
             break
@@ -109,21 +129,21 @@ def black_rook_moves(x, y):
 def horse_moves(x, y, player):
     moves = []
     if y > 1 and x < 7 and (BOARD[y-2][x+1] == 0 or who(BOARD[y-2][x+1]) == -player):  # Up Right
-        moves.append((x, y, x+1, y-2))
+        moves.append([x, y, x+1, y-2])
     if y > 1 and x > 0 and (BOARD[y-2][x-1] == 0 or who(BOARD[y-2][x-1]) == -player):  # Up Left
-        moves.append((x, y, x-1, y-2))
+        moves.append([x, y, x-1, y-2])
     if y < 6 and x < 7 and (BOARD[y+2][x+1] == 0 or who(BOARD[y+2][x+1]) == -player):  # Down Right
-        moves.append((x, y, x+1, y+2))
+        moves.append([x, y, x+1, y+2])
     if y < 6 and x > 0 and (BOARD[y+2][x-1] == 0 or who(BOARD[y+2][x-1]) == -player):  # Down Left
-        moves.append((x, y, x-1, y+2))
+        moves.append([x, y, x-1, y+2])
     if y > 0 and x < 6 and (BOARD[y-1][x+2] == 0 or who(BOARD[y-1][x+2]) == -player):  # Right Up
-        moves.append((x, y, x+2, y-1))
+        moves.append([x, y, x+2, y-1])
     if y < 7 and x < 6 and (BOARD[y+1][x+2] == 0 or who(BOARD[y+1][x+2]) == -player):  # Right Down
-        moves.append((x, y, x+2, y+1))
+        moves.append([x, y, x+2, y+1])
     if y > 0 and x > 1 and (BOARD[y-1][x-2] == 0 or who(BOARD[y-1][x-2]) == -player):  # Left Up
-        moves.append((x, y, x-2, y-1))
+        moves.append([x, y, x-2, y-1])
     if y < 7 and x > 1 and (BOARD[y+1][x-2] == 0 or who(BOARD[y+1][x-2]) == -player):  # Left Down
-        moves.append((x, y, x-2, y+1))
+        moves.append([x, y, x-2, y+1])
     return moves
 
 def white_horse_moves(x, y):
@@ -137,33 +157,33 @@ def bishop_moves(x, y, player):
     moves = []
     for i in [1, 2, 3, 4, 5, 6, 7]: # Right Down Diagonal
         if y-i >= 0 and x+i < 8 and BOARD[y-i][x+i] == 0:
-            moves.append((x, y, x+i, y-i))
+            moves.append([x, y, x+i, y-i])
         elif y-i >= 0 and x+i < 8 and who(BOARD[y-i][x+i]) == -player:
-            moves.append((x, y, x+i, y-i))
+            moves.append([x, y, x+i, y-i])
             break
         elif y-i >= 0 and x+i < 8 and who(BOARD[y-i][x+i]) == player:
             break
     for i in [1, 2, 3, 4, 5, 6, 7]: # Right Up Diagonal
         if y+i < 8 and x+i < 8 and BOARD[y+i][x+i] == 0:
-            moves.append((x, y, x+i, y+i))
+            moves.append([x, y, x+i, y+i])
         elif y+i < 8 and x+i < 8 and who(BOARD[y+i][x+i]) == -player:
-            moves.append((x, y, x+i, y+i))
+            moves.append([x, y, x+i, y+i])
             break
         elif y+i < 8 and x+i < 8 and who(BOARD[y+i][x+i]) == player:
             break
     for i in [1, 2, 3, 4, 5, 6, 7]: # Left Down Diagonal
         if y-i >= 0 and x-i >= 0 and BOARD[y-i][x-i] == 0:
-            moves.append((x, y, x-i, y-i))
+            moves.append([x, y, x-i, y-i])
         elif y-i >= 0 and x-i >= 0 and who(BOARD[y-i][x-i]) == -player:
-            moves.append((x, y, x-i, y-i))
+            moves.append([x, y, x-i, y-i])
             break
         elif y-i >= 0 and x-i >= 0 and who(BOARD[y-i][x-i]) == player:
             break
     for i in [1, 2, 3, 4, 5, 6, 7]: # Left Up Diagonal
         if y+i < 8 and x-i >= 0 and BOARD[y+i][x-i] == 0:
-            moves.append((x, y, x-i, y+i))
+            moves.append([x, y, x-i, y+i])
         elif y+i < 8 and x-i >= 0 and who(BOARD[y+i][x-i]) == -player:
-            moves.append((x, y, x-i, y+i))
+            moves.append([x, y, x-i, y+i])
             break;
         elif y+i < 8 and x-i >= 0 and who(BOARD[y+i][x-i]) == player:
             break;
@@ -189,7 +209,7 @@ def king_moves(x, y, player):
             if y+i < 0 or y+i > 7 or x+j < 0 or x+j > 7:
                 continue
             elif BOARD[y+i][x+j] == 0 or who(BOARD[y+i][x+j]) == -player:
-                moves.append((x, y, x+j, y+i))
+                moves.append([x, y, x+j, y+i])
     return moves
 
 def white_king_moves(x, y):
@@ -235,23 +255,43 @@ def print_board():
 def score():
     return sum([sum(row) for row in BOARD])
 
-def best_move(player):
-    global BOARD
+COUNT = 0
+
+def best_move(player, depth=0, maxblack=math.inf, maxwhite=-math.inf):
+    global COUNT
+    COUNT += 1
+    #####################################
+    if depth == 6:
+        return [(), score()]
     #####################################
     bm = None
     for move in all_moves(player):
-        board = copy.deepcopy(BOARD)
-        #####################################
         make_move(move)
-        if bm == None:
-            bm = [move, score()]
-        if player == BLACK and score() < bm[1]:
-            bm = [move, score()]
-        if player == WHITE and score() > bm[1]:
-            bm = [move, score()]
         #####################################
-        BOARD = board
-    return bm
+        if player == BLACK:
+            scr = best_move(-player, depth+1, maxblack, maxwhite)[1]
+            unmake_move(move)
+            if bm is None or scr < bm[1]:
+                bm = [move, scr]
+            if scr < maxblack:
+                maxblack = scr
+            if maxblack <= maxwhite:
+                return bm
+        if player == WHITE:
+            scr = best_move(-player, depth+1, maxblack, maxwhite)[1]
+            unmake_move(move)
+            if bm is None or scr > bm[1]:
+                bm = [move, scr]
+            if scr > maxwhite:
+                maxwhite = scr
+            if maxwhite >= maxblack:
+                return bm
+        #####################################
+    if bm is None:
+        return [(), score()]
+    else:
+        return bm
 
 if __name__ == '__main__':
     print(best_move(WHITE))
+
